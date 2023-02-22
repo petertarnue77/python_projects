@@ -10,19 +10,26 @@ import validation
 userDbPath = "data/userRecord/"
 
 
-def create_record(accountNumber, userDetails): 
+def create_record(accountNumber, firstName, lastName, email, password): 
+    completionState = False
+    userData = firstName + ',' + lastName +','+ email + ',' + password, str(0) 
+    if doesAccountNumberExist(accountNumber):
+        print("Account Already Exist")
+        return False
+    if does_email_exist(email):
+        print("User Already Exist")
+        return False
     completionState = False
     try:
         # name of text file would be accountNumber.txt
         file = open(userDbPath + str(accountNumber)+".txt", "x")
     except FileExistsError:
-        print("User already exit")
-        # delete the already create file, and print out error, then return False 
-        # check content of file before deleting
-        #delete_record(accountNumber)
+        doesFileContainData = file = read_record(userDbPath + str(accountNumber)+".txt", "x")
+        if not doesFileContainData:
+            delete_record(accountNumber)
     else:
          # add the user details to the file 
-        file.write(str(userDetails))
+        file.write(str(userData))
         completionState = True
     finally:
         file.close() 
@@ -33,9 +40,9 @@ def read_record(userAccountNumber):
     try:
         if isValidAccountNumber:
             # find the user with account number
-            file = open(userDbPath + str(userAccountNumber)+".txt", "r")
+            file = open(userDbPath + str(userAccountNumber)+'.txt', 'r')
         else:
-            file = open(userDbPath + str(userAccountNumber),"r")
+            file = open(userDbPath + str(userAccountNumber),'r')
 
     except FileNotFoundError:
         print("User not found")
@@ -46,6 +53,7 @@ def read_record(userAccountNumber):
     else:
         # read the content of the file
         return file.read()
+    return False
     
 def update_record(userAccountNumber):
     print("update user record")
@@ -68,17 +76,36 @@ def delete_record(userAccountNumber):
         finally:
             return isDeleteSuccessful 
 
-def does_email_exist(userAccountNumber, email):
-    # list of user
+def does_email_exist(email):
+    # list of user from directory
     allusers = os.listdir(userDbPath) 
+    for user in allusers: 
+        user_list =str.split(read_record(user),",")
+        if email in user_list[0]:
+            return True 
+    return False 
 
-    for user in allusers:
-        print(read_record(user))
-        print("\n")
+def doesAccountNumberExist(accountNumber):
+    all_user = os.listdir(userDbPath)
+    for user in all_user:
+        if user == str(accountNumber) + ".txt":
+            return True 
+    return False
+
+def autheticated_user(accountNumber, password): 
+    if doesAccountNumberExist(accountNumber):
+        user = str.split(read_record(accountNumber),',') 
+        print(user)
+        if password in user:
+            return user
+    return False
+
     # find user record in the data folder 
 
 
 # print(create_record(3521182386,['petertarue@gmail.com', 'Peter', 'Tarnue', 'passPeter', 0]))
 #print(read_record(3521182386)) 
-does_email_exist(3521182386, "petertarnue@gmail.com") 
+does_email_exist("kellietarnue@gmail.com")
 #print(read_record({"one", "two"}))
+print(autheticated_user(1530691041, "passFlomo")) 
+print(doesAccountNumberExist(1530691041))

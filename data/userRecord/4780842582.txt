@@ -1,0 +1,1 @@
+('krobotarnue@gmail.com,Krubo,Kpawolo,passKrubo', '0')

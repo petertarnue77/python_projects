@@ -13,6 +13,7 @@ import random
 import validation  
 import bankOps
 import database 
+from getpass import getpass
 
 def init():
     print("Welcome to BankPython")
@@ -28,25 +29,24 @@ def init():
 
 def login():
     print("******LOGIN********") 
+
     accountNUmberFromUser = input("What is your account number: \n")
 
     # validate account number
     isValidAccountNumber = validation.accountNumberValidation(accountNUmberFromUser) 
     try:
         if isValidAccountNumber:
-            password = input("What is your password: \n") 
-            for accountNumber, UserDetials in database.items():
-                if(accountNumber == int(accountNUmberFromUser)):
-                    if(UserDetials[3] == password):
-                        bankOps.bankOperation(UserDetials)
-            
+            password = getpass("What is your password: \n")
+            user = database.autheticated_user(accountNUmberFromUser, password) 
+            if user:
+                bankOps.bankOperation(user)
             print("Invalid Account or password: ")
             login()
     except Exception as e:
         print(e, "Please check properly")
     else:
         print('Account Number Invalid. Check that you have upto 10 degits and only integer')
-        init()
+        init() 
 
 
 def register():
@@ -55,14 +55,16 @@ def register():
     email = input("What is your email address: \n")
     firstName = input("What is your first name: \n") 
     lastName = input("What is your last name: \n") 
-    password = input("Create a password for yourself: \n")  
+
+    password = getpass("Create a password for yourself: \n")  
 
     # generate account number for user
     accountNumber = generateAccountNumber() 
-    prepareUserDetails = email + "," + firstName + "," +lastName + "," + password, str(0)
-    isUserCreated = database.create_record(accountNumber, prepareUserDetails)
     
-    if isDataBaseCreated:
+    prepareUserDetails = firstName + ',' + lastName +','+ email + ',' + password, str(0)
+
+    isUserCreated = database.create_record(accountNumber, prepareUserDetails) 
+    if isUserCreated:
         print("Your Account has been Created")
         print(" ====== ==== ==== ==== ")
         print("your Account Number is: %d" % accountNumber)
