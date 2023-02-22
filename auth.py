@@ -12,7 +12,7 @@
 import random
 
 database = {
-
+    2978032885: ['Peter', "Tarnue", "petertarnue@gmail.com", "passPeter", 200]
 }  
 
 def init():
@@ -52,7 +52,7 @@ def register():
     accountNumber = generateAccountNumber() 
 
     # stored user account details in database
-    database[accountNumber] = [email, firstName, lastName, password] 
+    database[accountNumber] = [email, firstName, lastName, password, 0] 
 
     print("Your Account has been Created")
     print(" ====== ==== ==== ==== ")
@@ -85,10 +85,20 @@ def bankOperation(user):
 
 
 def withdrawalOperation():
-    print("withdrawal operation") 
+    # get current balance
+    balance = accountBalance(userDetails)
+    # get amount to withdral
+    # check if current balance > withdral amount
+    # deduct withdrawal amount from current balance
+    # display current balance
+    pass
 
 def depositOperation():
     print("deposit operation") 
+    # get current balance
+    # get amount to deposit
+    # add deposited amount to current balance 
+    # display current balance
 
 def complaint():
     print("complaint") 
@@ -96,13 +106,18 @@ def complaint():
 def logout():
     login()
 
+
 def generateAccountNumber():
     accountNumber = random.randrange(1111111111, 9999999999) 
     return accountNumber 
 
-    
+def setCurrentBalance(userDetails, balance):
+    userDetails[0] = balance
+    return userDetails
 
 
-
+def accountBalance(userDetails):
+    return userDetails[0]
+ 
 #=======ACTUAL BANKING SYSTEM========
 init()
