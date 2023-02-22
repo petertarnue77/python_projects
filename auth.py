@@ -29,16 +29,42 @@ def init():
 
 def login():
     print("******LOGIN********") 
-    accountNUmberFromUser = int(input("What is your account number: \n"))
-    password = input("What is your password: \n") 
+    accountNUmberFromUser = input("What is your account number: \n")
 
-    for accountNumber, UserDetials in database.items():
-        if(accountNumber == accountNUmberFromUser):
-            if(UserDetials[3] == password):
-                bankOperation(UserDetials)
-    
-    print("Invalid Account or password: ")
-    login()
+    # validate account number
+    isValidAccountNumber = accountNumberValidation(accountNUmberFromUser) 
+
+    if isValidAccountNumber:
+        password = input("What is your password: \n") 
+        for accountNumber, UserDetials in database.items():
+            if(accountNumber == int(accountNUmberFromUser)):
+                if(UserDetials[3] == password):
+                    bankOperation(UserDetials)
+        
+        print("Invalid Account or password: ")
+        login() 
+    else:
+        init()
+
+def accountNumberValidation(accountNumber):
+    # Check if account number is not empty 
+    if accountNumber:
+        # check if account number is 10 digits
+        if len(str(accountNumber)) == 10: 
+            try:
+                int(accountNumber) 
+                return True
+            except ValueError:
+                print("Invalid Account Number, Account Number should be integer")
+                return False
+            except TypeError:
+                print("Invalid Account Thpe")
+        else:
+            print("Account Number can't be more or less then 10 digits")
+            return False
+    else:
+        print("Account Number is a required filed") 
+        return False
 
 def register():
     print("********* REGISTER ACCOUNT ********")
@@ -48,9 +74,13 @@ def register():
     lastName = input("What is your last name: \n") 
     password = input("Create a password for yourself: \n")  
 
-    # generate account number for user
-    accountNumber = generateAccountNumber() 
-
+    try:
+        # generate account number for user
+        accountNumber = generateAccountNumber() 
+    except Exception as e:
+        print(e, "Account generation fail due to internet connection")
+        init()
+    
     # stored user account details in database
     database[accountNumber] = [email, firstName, lastName, password, 0] 
 
